@@ -1,6 +1,6 @@
 # Counter DApp
 
-[![Compact Compiler Version](https://releases.midnight.network/#/compiler)](0.21.0)
+[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.21.0-1abc9c.svg)](https://shields.io/)
 
 ## Prerequisites
 
