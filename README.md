@@ -1,5 +1,7 @@
 # Counter DApp
 
+[![Compact Compiler Version](https://releases.midnight.network/#/compiler)](0.21.0)
+
 ## Prerequisites
 
 1. The Midnight team recommends using [NVM](https://github.com/nvm-sh/nvm#installing-and-updating) to install the Node.js version that this project requires. After installing it, you should be able to verify its presence with:
@@ -79,6 +81,8 @@ how to initialize and call smart contract code locally without running a node:
    ```sh
    yarn compact
    ```
+
+   > If this doesn't work, you need to export the current path to the Compact compiler to your console with `export COMPACT_PATH="/path/to/compactc"`
 
    You should see output from the Compact compiler with some details about generated circuits:
 
