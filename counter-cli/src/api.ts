@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
-import { Contract, ledger, witnesses } from '@midnight-ntwrk/counter-contract';
+import { Contract, ledger } from '../../contract/src/managed/counter/contract/index.cjs';
+import { witnesses } from '../../contract/src/witnesses';
 import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
@@ -319,7 +320,7 @@ export function setLogger(_logger: Logger) {
 export const streamToString = async (stream: fs.ReadStream): Promise<string> => {
   const chunks: Buffer[] = [];
   return await new Promise((resolve, reject) => {
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+    stream.on('data', (chunk) => chunks.push(typeof chunk === 'string' ? Buffer.from(chunk, 'utf8') : chunk));
     stream.on('error', (err) => {
       reject(err);
     });

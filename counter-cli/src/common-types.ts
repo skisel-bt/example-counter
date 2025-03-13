@@ -1,4 +1,5 @@
-import { type Contract, type Witnesses, type CounterPrivateState } from '@midnight-ntwrk/counter-contract';
+import { type Contract, type Witnesses } from '../../contract/src/managed/counter/contract/index.cjs';
+import type { CounterPrivateState } from '../../contract/src/witnesses';
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 
