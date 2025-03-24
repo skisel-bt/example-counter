@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { Contract, ledger } from '../../contract/src/managed/counter/contract/index.cjs';
-import { witnesses } from '../../contract/src/witnesses';
+import { witnesses } from '../../contract/src/witnesses.js';
 import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
@@ -37,9 +37,8 @@ import * as fsAsync from 'node:fs/promises';
 import * as fs from 'node:fs';
 
 let logger: Logger;
-// @ts-expect-error: It's needed to make Scala.js and WASM code able to use cryptography
-globalThis.crypto = webcrypto;
-
+// Instead of setting globalThis.crypto which is read-only, we'll ensure crypto is available
+// but won't try to overwrite the global property
 // @ts-expect-error: It's needed to enable WebSocket usage through apollo
 globalThis.WebSocket = WebSocket;
 
@@ -292,7 +291,7 @@ export const buildWalletAndWaitForFunds = async (
 
 export const randomBytes = (length: number): Uint8Array => {
   const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
+  webcrypto.getRandomValues(bytes);
   return bytes;
 };
 
