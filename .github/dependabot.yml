@@ -13,7 +13,12 @@ updates:
 #      interval: "daily"
 #
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/contract"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/counter-cli"
     schedule:
       interval: "daily"
 
