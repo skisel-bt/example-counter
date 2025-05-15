@@ -1,11 +1,11 @@
 # Counter DApp
 
-[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.22.0-1abc9c.svg)](https://shields.io/)  
+[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.23.0-1abc9c.svg)](https://shields.io/)  
 [![Generic badge](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://shields.io/)
 
 ## Prerequisites
 
-1. You must have NodeJS version 22 installed.
+1. You must have NodeJS version 23 installed.
 2. Download the latest version of the Compact compiler from [the compiler release page](https://docs.midnight.network/relnotes/compact) and follow the instructions to install it (in particular the instructions regarding permissions that must be set to compile the contracts).
 3. Create a directory for the compiler executables, and unzip the downloaded file into that directory.
 4. Add the directory to your shell's $PATH.
@@ -84,7 +84,7 @@ how to initialize and call the smart contract code locally without running a nod
    > compact
    > compactc --skip-zk src/counter.compact src/managed/counter
 
-   Compactc version: 0.22.0
+   Compactc version: 0.23.0
    ```
 
    The compiler will complete very quickly because we've instructed it to skip ZK key generation with the option `--skip-zk`. The compiler's output files will be placed in the directory `contract/src/managed/counter`.
