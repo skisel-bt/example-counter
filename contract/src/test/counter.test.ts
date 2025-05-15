@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { it, describe, expect } from "@jest/globals";
 import { CounterSimulator } from "./counter-simulator.js";
 import {
   NetworkId,
