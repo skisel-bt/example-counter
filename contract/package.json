@@ -22,11 +22,16 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
     "@midnight-ntwrk/compact-runtime": "^0.8.1",
     "@midnight-ntwrk/ledger": "^4.0.0",
     "@midnight-ntwrk/midnight-js-network-id": "2.0.0",
     "@midnight-ntwrk/zswap": "^4.0.0",
-    "eslint": "^9.24.0",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^1.6.1"
