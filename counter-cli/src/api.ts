@@ -17,7 +17,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { Counter } from '../../contract/src/index.js';
-import { witnesses, type CounterPrivateState } from '../../contract/src/witnesses.js';
+import { type CounterPrivateState, witnesses } from '../../contract/src/witnesses.js';
 import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
@@ -34,16 +34,15 @@ import {
 import { type Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { type Wallet } from '@midnight-ntwrk/wallet-api';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
-import * as crypto from 'crypto';
 import { webcrypto } from 'crypto';
 import { type Logger } from 'pino';
 import * as Rx from 'rxjs';
 import { WebSocket } from 'ws';
 import {
   type CounterContract,
+  type CounterPrivateStateId,
   type CounterProviders,
   type DeployedCounterContract,
-  type CounterPrivateStateId,
 } from './common-types.js';
 import { type Config, contractConfig } from './config.js';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
@@ -126,6 +125,7 @@ export const createWalletAndMidnightProvider = async (wallet: Wallet): Promise<W
   const state = await Rx.firstValueFrom(wallet.state());
   return {
     coinPublicKey: state.coinPublicKey,
+    encryptionPublicKey: state.encryptionPublicKey,
     balanceTx(tx: UnbalancedTransaction, newCoins: CoinInfo[]): Promise<BalancedTransaction> {
       return wallet
         .balanceTransaction(
@@ -147,16 +147,15 @@ export const waitForSync = (wallet: Wallet) =>
     wallet.state().pipe(
       Rx.throttleTime(5_000),
       Rx.tap((state) => {
-        const scanned = state.syncProgress?.synced ?? 0n;
-        const total = state.syncProgress?.total.toString() ?? 'unknown number';
-        const txs = state.transactionHistory.length;
-        logger.info(`Wallet scanned ${scanned} indices out of ${total}, transactions=${txs}`);
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+        logger.info(
+          `Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,
+        );
       }),
       Rx.filter((state) => {
         // Let's allow progress only if wallet is synced fully
-        const synced = state.syncProgress?.synced ?? 0n;
-        const total = state.syncProgress?.total ?? 50n;
-        return state.syncProgress !== undefined && total === synced;
+        return state.syncProgress !== undefined && state.syncProgress.synced;
       }),
     ),
   );
@@ -166,9 +165,11 @@ export const waitForSyncProgress = async (wallet: Wallet) =>
     wallet.state().pipe(
       Rx.throttleTime(5_000),
       Rx.tap((state) => {
-        const scanned = state.syncProgress?.synced ?? 0n;
-        const total = state.syncProgress?.total.toString() ?? 'unknown number';
-        logger.info(`Wallet scanned ${scanned} indices out of ${total}`);
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
+        logger.info(
+          `Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,
+        );
       }),
       Rx.filter((state) => {
         // Let's allow progress only if syncProgress is defined
@@ -182,17 +183,15 @@ export const waitForFunds = (wallet: Wallet) =>
     wallet.state().pipe(
       Rx.throttleTime(10_000),
       Rx.tap((state) => {
-        const scanned = state.syncProgress?.synced ?? 0n;
-        const total = state.syncProgress?.total.toString() ?? 'unknown number';
+        const applyGap = state.syncProgress?.lag.applyGap ?? 0n;
+        const sourceGap = state.syncProgress?.lag.sourceGap ?? 0n;
         logger.info(
-          `Wallet processed ${scanned} indices out of ${total}, transactions=${state.transactionHistory.length}`,
+          `Waiting for funds. Backend lag: ${sourceGap}, wallet lag: ${applyGap}, transactions=${state.transactionHistory.length}`,
         );
       }),
       Rx.filter((state) => {
         // Let's allow progress only if wallet is synced
-        const synced = state.syncProgress?.synced;
-        const total = state.syncProgress?.total;
-        return synced !== undefined && synced === total;
+        return state.syncProgress?.synced === true;
       }),
       Rx.map((s) => s.balances[nativeToken()] ?? 0n),
       Rx.filter((balance) => balance > 0n),
@@ -233,11 +232,12 @@ export const buildWalletAndWaitForFunds = async (
         } else {
           const newState = await waitForSync(wallet);
           // allow for situations when there's no new index in the network between runs
-          if ((newState.syncProgress?.total ?? 0n) >= stateObject.offset - 1) {
+          if (newState.syncProgress?.synced) {
             logger.info('Wallet was able to sync from restored state');
           } else {
             logger.info(`Offset: ${stateObject.offset}`);
-            logger.info(`SyncProgress.total: ${newState.syncProgress?.total}`);
+            logger.info(`SyncProgress.lag.applyGap: ${newState.syncProgress?.lag.applyGap}`);
+            logger.info(`SyncProgress.lag.sourceGap: ${newState.syncProgress?.lag.sourceGap}`);
             logger.warn('Wallet was not able to sync from restored state, building wallet from scratch');
             wallet = await WalletBuilder.buildFromSeed(
               indexer,
@@ -350,11 +350,14 @@ export const streamToString = async (stream: fs.ReadStream): Promise<string> => 
 };
 
 export const isAnotherChain = async (wallet: Wallet, offset: number) => {
-  const state = await waitForSyncProgress(wallet);
-  // allow for situations when there's no new index in the network between runs
-  if (state.syncProgress !== undefined) {
-    return state.syncProgress.total < offset - 1;
-  }
+  //const state = await waitForSyncProgress(wallet);
+  //// allow for situations when there's no new index in the network between runs
+  //if (state.syncProgress !== undefined) {
+  //  return state.syncProgress.total < offset - 1;
+  //}
+  logger.info('Checking if the chain was reset...', offset);
+  // TODO: check the API regarding providing offset in the stored state
+  return true;
 };
 
 export const saveState = async (wallet: Wallet, filename: string) => {
