@@ -16,8 +16,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
-import { Counter } from '../../contract/src/index.js';
-import { type CounterPrivateState, witnesses } from '../../contract/src/witnesses.js';
+import { Counter } from '../dist/contract/src/index.js';
+import { type CounterPrivateState, witnesses } from '../dist/contract/src/witnesses.js';
 import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
@@ -214,7 +214,7 @@ export const buildWalletAndWaitForFunds = async (
         serializedStream.on('finish', () => {
           serializedStream.close();
         });
-        wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, serialized, 'info');
+        wallet = await WalletBuilder.restore(indexer, indexerWS, proofServer, node, seed, serialized, 'info');
         wallet.start();
         const stateObject = JSON.parse(serialized);
         if ((await isAnotherChain(wallet, Number(stateObject.offset))) === true) {
@@ -256,6 +256,8 @@ export const buildWalletAndWaitForFunds = async (
           logger.error(error);
         } else if (error instanceof Error) {
           logger.error(error.message);
+        } else {
+          logger.error(error);
         }
         logger.warn('Wallet was not able to restore using the stored state, building wallet from scratch');
         wallet = await WalletBuilder.buildFromSeed(
@@ -350,14 +352,16 @@ export const streamToString = async (stream: fs.ReadStream): Promise<string> => 
 };
 
 export const isAnotherChain = async (wallet: Wallet, offset: number) => {
-  //const state = await waitForSyncProgress(wallet);
-  //// allow for situations when there's no new index in the network between runs
-  //if (state.syncProgress !== undefined) {
-  //  return state.syncProgress.total < offset - 1;
-  //}
-  logger.info('Checking if the chain was reset...', offset);
-  // TODO: check the API regarding providing offset in the stored state
-  return true;
+  await waitForSyncProgress(wallet);
+  // Here wallet does not expose the offset block it is synced to, that is why this workaround
+  const walletOffset = Number(JSON.parse(await wallet.serializeState()).offset);
+  if (walletOffset < offset - 1) {
+    logger.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} so it is another chain`);
+    return true;
+  } else {
+    logger.info(`Your offset offset is: ${walletOffset} restored offset: ${offset} ok`);
+    return false;
+  }
 };
 
 export const saveState = async (wallet: Wallet, filename: string) => {
