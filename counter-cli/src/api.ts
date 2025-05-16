@@ -16,8 +16,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
-import { Counter } from '../dist/contract/src/index.js';
-import { type CounterPrivateState, witnesses } from '../dist/contract/src/witnesses.js';
+import { Counter } from '../../contract/src/index.js';
+import { type CounterPrivateState, witnesses } from '../../contract/src/witnesses.js';
 import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
