@@ -5,7 +5,7 @@
 
 ## Prerequisites
 
-1. You must have NodeJS version 23 installed.
+1. You must have NodeJS version 22 installed.
 2. Download the latest version of the Compact compiler from [the compiler release page](https://docs.midnight.network/relnotes/compact) and follow the instructions to install it (in particular the instructions regarding permissions that must be set to compile the contracts).
 3. Create a directory for the compiler executables, and unzip the downloaded file into that directory.
 4. Add the directory to your shell's $PATH.
