@@ -6,17 +6,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "testnet-remote": "node --experimental-specifier-resolution=node --loader ts-node/esm dist/counter-cli/src/testnet-remote.js",
-    "testnet-remote-ps": "cp -r proof-server-testnet.yml ./dist/counter-cli && node --experimental-specifier-resolution=node ts-node/esm dist/counter-cli/src/testnet-remote-start-proof-server.js",
-    "testnet-local": "node --experimental-specifier-resolution=node dist/testnet-local.js",
-    "standalone": "docker compose -f standalone.yml pull && node --experimental-specifier-resolution=node dist/standalone.js",
+    "testnet-remote": "node --experimental-specifier-resolution=node --loader ts-node/esm src/testnet-remote.ts",
+    "testnet-remote-ps": "cp -r proof-server-testnet.yml ./dist/ && node --experimental-specifier-resolution=node ts-node/esm src/testnet-remote-start-proof-server.ts",
+    "testnet-local": "node --experimental-specifier-resolution=node src/testnet-local.ts",
+    "standalone": "docker compose -f standalone.yml pull && node --experimental-specifier-resolution=node src/standalone.ts",
     "test-api": "docker compose -f standalone.yml pull && DEBUG='testcontainers' vitest run",
     "test-against-testnet": "RUN_ENV_TESTS=true TEST_ENV=testnet TEST_WALLET_SEED=1dec0dd58fbe4d3206ef960aebff95a77e09dffbd19f3e9439d23fe6de4fcdd1 vitest run",
-    "build": "rm -rf dist && tsc --project tsconfig.build.json && cp -r ../contract/src/ dist/contract/src",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json",
     "lint": "eslint src",
-    "compile-contract": "compactc ../contract/src/counter.compact ./dist/contract/src/managed/counter",
-    "start-testnet-remote": "npm run build && npm run compile-contract && npm run testnet-remote",
-    "start-testnet-remote-ps": "npm run build && npm run compile-contract && npm run testnet-remote-ps"
+    "start-testnet-remote": "npm run build && npm run testnet-remote",
+    "start-testnet-remote-ps": "npm run build && npm run testnet-remote-ps"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "^0.8.1",
