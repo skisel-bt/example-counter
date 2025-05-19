@@ -65,14 +65,7 @@ how to initialize and call the smart contract code locally without running a nod
 
 ### Building the smart contract
 
-1. Install dependencies:
-
-   ```sh
-   cd contract
-   npm install
-   ```
-
-2. Compile the contract:
+Compile the contract:
 
    ```sh
    npm run compact
@@ -89,7 +82,7 @@ how to initialize and call the smart contract code locally without running a nod
 
    The compiler will complete very quickly because we've instructed it to skip ZK key generation with the option `--skip-zk`. The compiler's output files will be placed in the directory `contract/src/managed/counter`.
 
-3. Build the TypeScript source files:
+Build the TypeScript source files:
 
    ```sh
    npm run build
@@ -97,7 +90,7 @@ how to initialize and call the smart contract code locally without running a nod
 
    This creates the `contract/dist` directory.
 
-4. Start unit tests:
+Start unit tests:
    ```sh
    npm run test
    ```
@@ -110,22 +103,10 @@ After building the smart contract you can deploy it using the project in the sub
 cd ../counter-cli
 ```
 
-Install dependencies:
-
-```sh
-npm install
-```
-
 Build from source code:
 
 ```sh
 npm run build
-```
-
-Import the contract code:
-
-```sh
-npm run compile-contract
 ```
 
 Run the DApp:

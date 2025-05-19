@@ -19,7 +19,6 @@
     "compact": "compactc src/counter.compact src/managed/counter",
     "test": "vitest run",
     "test:compile": "npm run compact && vitest run",
-    "prepack": "yarn build",
     "build": "rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed && cp ./src/counter.compact ./dist",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit"

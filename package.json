@@ -7,12 +7,6 @@
     "counter-cli",
     "contract"
   ],
-  "scripts": {
-    "build": "npm run build -w contract && npm run build -w counter-cli",
-    "lint": "npm run lint -w contract && npm run lint -w counter-cli",
-    "test": "npm run test -w contract && npm run test -w counter-cli",
-    "typecheck": "npm run typecheck -w contract"
-  },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
