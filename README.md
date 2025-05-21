@@ -16,7 +16,7 @@
    export PATH=$PATH:$HOME/bin/compactc
    ```
 
-5. Run `npm install` to install all the necessary packages.
+5. Run `npm install` in the root folder to install all the necessary packages.
 6. Compile and build the code in the `contract` folder before running the code in the `counter-cli` folder.  
    In the `contract` folder, run this command:
 
