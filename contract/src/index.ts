@@ -14,4 +14,4 @@
 // limitations under the License.
 
 export * as Counter from "./managed/counter/contract/index.cjs";
-export * from "./witnesses.js";
+export * from "./witnesses";

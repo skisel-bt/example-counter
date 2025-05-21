@@ -1,6 +1,6 @@
 # Counter DApp
 
-[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.22.0-1abc9c.svg)](https://shields.io/)  
+[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.23.0-1abc9c.svg)](https://shields.io/)  
 [![Generic badge](https://img.shields.io/badge/TypeScript-5.8.3-blue.svg)](https://shields.io/)
 
 ## Prerequisites
@@ -16,7 +16,7 @@
    export PATH=$PATH:$HOME/bin/compactc
    ```
 
-5. Run `npm install` to install all the necessary packages.
+5. Run `npm install` in the root folder to install all the necessary packages.
 6. Compile and build the code in the `contract` folder before running the code in the `counter-cli` folder.  
    In the `contract` folder, run this command:
 
@@ -65,14 +65,7 @@ how to initialize and call the smart contract code locally without running a nod
 
 ### Building the smart contract
 
-1. Install dependencies:
-
-   ```sh
-   cd contract
-   npm install
-   ```
-
-2. Compile the contract:
+Compile the contract:
 
    ```sh
    npm run compact
@@ -84,12 +77,12 @@ how to initialize and call the smart contract code locally without running a nod
    > compact
    > compactc --skip-zk src/counter.compact src/managed/counter
 
-   Compactc version: 0.22.0
+   Compactc version: 0.23.0
    ```
 
    The compiler will complete very quickly because we've instructed it to skip ZK key generation with the option `--skip-zk`. The compiler's output files will be placed in the directory `contract/src/managed/counter`.
 
-3. Build the TypeScript source files:
+Build the TypeScript source files:
 
    ```sh
    npm run build
@@ -97,7 +90,7 @@ how to initialize and call the smart contract code locally without running a nod
 
    This creates the `contract/dist` directory.
 
-4. Start unit tests:
+Start unit tests:
    ```sh
    npm run test
    ```
@@ -110,22 +103,10 @@ After building the smart contract you can deploy it using the project in the sub
 cd ../counter-cli
 ```
 
-Install dependencies:
-
-```sh
-npm install
-```
-
 Build from source code:
 
 ```sh
 npm run build
-```
-
-Import the contract code:
-
-```sh
-npm run compile-contract
 ```
 
 Run the DApp:

@@ -19,9 +19,9 @@ import { stdin as input, stdout as output } from 'node:process';
 import { createInterface, type Interface } from 'node:readline/promises';
 import { type Logger } from 'pino';
 import { type StartedDockerComposeEnvironment, type DockerComposeEnvironment } from 'testcontainers';
-import { type CounterProviders, type DeployedCounterContract } from './common-types.js';
-import { type Config, StandaloneConfig } from './config.js';
-import * as api from './api.js';
+import { type CounterProviders, type DeployedCounterContract } from './common-types';
+import { type Config, StandaloneConfig } from './config';
+import * as api from './api';
 
 let logger: Logger;
 
@@ -165,19 +165,23 @@ export const run = async (config: Config, _logger: Logger, dockerEnv?: DockerCom
       rli.close();
       rli.removeAllListeners();
     } catch (e) {
+      logger.error(`Error closing readline interface: ${e}`);
     } finally {
       try {
         if (wallet !== null) {
           await wallet.close();
         }
       } catch (e) {
+        logger.error(`Error closing wallet: ${e}`);
       } finally {
         try {
           if (env !== undefined) {
             await env.down();
             logger.info('Goodbye');
           }
-        } catch (e) {}
+        } catch (e) {
+          logger.error(`Error shutting down docker environment: ${e}`);
+        }
       }
     }
   }

@@ -1,5 +1,8 @@
 {
   "name": "@midnight-ntwrk/counter-contract",
+  "version": "0.1.0",
+  "author": "IOG",
+  "private": true,
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -13,24 +16,11 @@
     }
   },
   "scripts": {
-    "compact": "compactc --skip-zk src/counter.compact src/managed/counter",
-    "test": "jest",
-    "test:compile": "npm run compact && jest",
-    "prepack": "yarn build",
+    "compact": "compactc src/counter.compact src/managed/counter",
+    "test": "vitest run",
+    "test:compile": "npm run compact && vitest run",
     "build": "rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed && cp ./src/counter.compact ./dist",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit"
-  },
-  "devDependencies": {
-    "@jest/globals": "^29.7.0",
-    "@midnight-ntwrk/compact-runtime": "^0.7.0",
-    "@midnight-ntwrk/ledger": "^3.0.6",
-    "@midnight-ntwrk/midnight-js-network-id": "^1.0.0",
-    "@midnight-ntwrk/zswap": "^3.0.6",
-    "eslint": "^9.24.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.3.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
   }
 }
