@@ -63,7 +63,16 @@ export class CounterSimulator {
   public increment(): Ledger {
     // Update the current context to be the result of executing the circuit.
     this.circuitContext = this.contract.impureCircuits.increment(
-      this.circuitContext
+      this.circuitContext,
+      {
+        is_left: true,
+        left: {
+          bytes: new Uint8Array(32)
+        },
+        right: {
+          bytes: new Uint8Array(32)
+        }
+      }
     ).context;
     return ledger(this.circuitContext.transactionContext.state);
   }

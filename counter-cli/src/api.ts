@@ -17,7 +17,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { Counter, type CounterPrivateState, witnesses } from '@midnight-ntwrk/counter-contract';
-import { type CoinInfo, nativeToken, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
+import {type CoinInfo, encodeCoinPublicKey, nativeToken, Transaction, type TransactionId} from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
@@ -32,7 +32,7 @@ import {
 } from '@midnight-ntwrk/midnight-js-types';
 import { type Resource, WalletBuilder } from '@midnight-ntwrk/wallet';
 import { type Wallet } from '@midnight-ntwrk/wallet-api';
-import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
+import {sampleCoinPublicKey, Transaction as ZswapTransaction} from '@midnight-ntwrk/zswap';
 import { webcrypto } from 'crypto';
 import { type Logger } from 'pino';
 import * as Rx from 'rxjs';
@@ -101,7 +101,15 @@ export const deploy = async (
 
 export const increment = async (counterContract: DeployedCounterContract): Promise<FinalizedTxData> => {
   logger.info('Incrementing...');
-  const finalizedTxData = await counterContract.callTx.increment();
+  const finalizedTxData = await counterContract.callTx.increment({
+    is_left: true,
+    left: {
+      bytes: encodeCoinPublicKey(sampleCoinPublicKey()),
+    },
+    right: {
+      bytes: randomBytes(32),
+    },
+  });
   logger.info(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   return finalizedTxData.public;
 };
